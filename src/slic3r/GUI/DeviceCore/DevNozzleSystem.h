@@ -22,7 +22,7 @@ namespace Slic3r
    {
        friend class DevNozzleSystemParser;
    public:
-       DevNozzleSystem(MachineObject* owner) : m_owner(owner) {}
+       DevNozzleSystem(MachineObject* owner) {}
    private:
        enum Status : int
        {
@@ -40,8 +40,6 @@ namespace Slic3r
        void Reset();
 
    private:
-       MachineObject* m_owner = nullptr;
-
        int                          m_extder_exist = 0;  //0- none exist 1-exist, unused
        int                          m_state = 0; //0-idle 1-checking, unused
        std::map<int, DevNozzle> m_nozzles;

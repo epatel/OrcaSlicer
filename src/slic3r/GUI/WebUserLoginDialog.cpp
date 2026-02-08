@@ -353,7 +353,7 @@ void ZUserLogin::OnScriptMessage(wxWebViewEvent &evt)
                 std::string jump_url = j["data"]["url"].get<std::string>();
                 int loopback_port = m_loopback_port > 0 ? m_loopback_port : LOCALHOST_PORT;
                 wxGetApp().start_http_server(loopback_port);
-                CallAfter([this, jump_url] {
+                CallAfter([jump_url] {
                     wxString url = wxString::FromUTF8(jump_url);
                     wxLaunchDefaultBrowser(url);
                     });
@@ -362,7 +362,7 @@ void ZUserLogin::OnScriptMessage(wxWebViewEvent &evt)
         else if (strCmd == "new_webpage") {
             if (j["data"].contains("url")) {
                 std::string jump_url = j["data"]["url"].get<std::string>();
-                CallAfter([this, jump_url] {
+                CallAfter([jump_url] {
                     wxString url = wxString::FromUTF8(jump_url);
                     wxLaunchDefaultBrowser(url);
                     });

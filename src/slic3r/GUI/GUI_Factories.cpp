@@ -537,7 +537,7 @@ wxMenu* MenuFactory::append_submenu_add_handy_model(wxMenu* menu, ModelVolumeTyp
                        L("Voron Cube"), L("Stanford Bunny"), L("Orca String Hell") }) {
         append_menu_item(
             sub_menu, wxID_ANY, _(item), "",
-            [type, item](wxCommandEvent&) {
+            [item](wxCommandEvent&) {
                 std::vector<boost::filesystem::path> input_files;
                 bool                                 is_stringhell = false;
                 std::string                          file_name     = item;
@@ -1289,7 +1289,7 @@ void MenuFactory::create_default_menu()
 
     append_menu_check_item(&m_default_menu, wxID_ANY, _L("Show Labels"), "",
         [](wxCommandEvent&) { plater()->show_view3D_labels(!plater()->are_view3D_labels_shown()); plater()->get_current_canvas3D()->post_event(SimpleEvent(wxEVT_PAINT)); }, &m_default_menu,
-        []() { return plater()->is_view3D_shown(); }, [this]() { return plater()->are_view3D_labels_shown(); }, m_parent);
+        []() { return plater()->is_view3D_shown(); }, []() { return plater()->are_view3D_labels_shown(); }, m_parent);
 }
 
 void MenuFactory::create_common_object_menu(wxMenu* menu)
@@ -1934,7 +1934,7 @@ void MenuFactory::append_menu_item_clone(wxMenu* menu)
     static const wxString ctrl = _L("Ctrl+");
 #endif
     append_menu_item(menu, wxID_ANY, _L("Clone") + "\t" + ctrl + "K", "",
-        [this](wxCommandEvent&) {
+        [](wxCommandEvent&) {
             plater()->clone_selection();
         }, "", nullptr,
         []() {
@@ -1952,7 +1952,7 @@ void MenuFactory::append_menu_item_simplify(wxMenu* menu)
 void MenuFactory::append_menu_item_center(wxMenu* menu)
 {
      append_menu_item(menu, wxID_ANY, _L("Center") , "",
-        [this](wxCommandEvent&) {
+        [](wxCommandEvent&) {
             plater()->center_selection();
         }, "", nullptr,
         []() {
@@ -1971,7 +1971,7 @@ void MenuFactory::append_menu_item_center(wxMenu* menu)
 void MenuFactory::append_menu_item_drop(wxMenu* menu)
 {
      append_menu_item(menu, wxID_ANY, _L("Drop") , "",
-        [this](wxCommandEvent&) {
+        [](wxCommandEvent&) {
             plater()->drop_selection();
         }, "", nullptr,
         []() {
@@ -2147,7 +2147,7 @@ void MenuFactory::append_menu_item_set_printable(wxMenu* menu)
     }
 
     wxString menu_text = _L("Printable");
-    wxMenuItem* menu_item_set_printable = append_menu_check_item(menu, wxID_ANY, menu_text, "", [this, all_printable](wxCommandEvent&) {
+    wxMenuItem* menu_item_set_printable = append_menu_check_item(menu, wxID_ANY, menu_text, "", [all_printable](wxCommandEvent&) {
         Selection& selection = plater()->canvas3D()->get_selection();
         selection.set_printable(!all_printable);
         }, menu);
@@ -2199,7 +2199,7 @@ void MenuFactory::append_menu_item_plate_name(wxMenu *menu)
 
     auto item = append_menu_item(
         menu, wxID_ANY, name, "",
-        [plate](wxCommandEvent &e) {
+        [](wxCommandEvent &e) {
             int hover_idx =plater()->canvas3D()->GetHoverId();
             if (hover_idx == -1) {
                 int plate_idx=plater()->GetPlateIndexByRightMenuInLeftUI();

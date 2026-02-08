@@ -22,6 +22,7 @@ public:
     MultiPoint(MultiPoint &&other) : points(std::move(other.points)) {}
     MultiPoint(std::initializer_list<Point> list) : points(list) {}
     explicit MultiPoint(const Points &_points) : points(_points) {}
+    virtual ~MultiPoint() = default;
     MultiPoint& operator=(const MultiPoint &other) { points = other.points; return *this; }
     MultiPoint& operator=(MultiPoint &&other) { points = std::move(other.points); return *this; }
     void scale(double factor);
@@ -120,6 +121,7 @@ public:
     Points3 points;
 
     void append(const Vec3crd& point) { this->points.push_back(point); }
+    virtual ~MultiPoint3() = default;
 
     void translate(double x, double y);
     void translate(const Point& vector);

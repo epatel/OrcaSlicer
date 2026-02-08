@@ -240,7 +240,7 @@ void GLCanvas3D::LayersEditing::show_tooltip_information(const GLCanvas3D& canva
 
     if (ImGui::IsItemHovered()) {
         ImGui::BeginTooltip2(ImVec2(x, y));
-        auto draw_text_with_caption = [this, &caption_max, &imgui](const wxString& caption, const wxString& text) {
+        auto draw_text_with_caption = [&caption_max, &imgui](const wxString& caption, const wxString& text) {
             imgui.text_colored(ImGuiWrapper::COL_ACTIVE, caption);
             ImGui::SameLine(caption_max);
             imgui.text_colored(ImGuiWrapper::COL_WINDOW_BG, text);
@@ -8540,7 +8540,7 @@ void GLCanvas3D::_render_canvas_toolbar()
         Plater*    p   = wxGetApp().plater();
         AppConfig* cfg = wxGetApp().app_config;
 
-        auto create_menu_item = [this, sc](
+        auto create_menu_item = [sc](
             const std::string& name,
             bool enable,
             bool condition,
@@ -8557,7 +8557,7 @@ void GLCanvas3D::_render_canvas_toolbar()
         create_menu_item( "3D Navigator",
             m_canvas_type != ECanvasType::CanvasAssembleView, // not work on assembly
             wxGetApp().show_3d_navigator(),
-            [this]{
+            []{
                 wxGetApp().toggle_show_3d_navigator();
                 ImGui::CloseCurrentPopup(); // Close popup to show changes on UI
             }
@@ -8566,7 +8566,7 @@ void GLCanvas3D::_render_canvas_toolbar()
         create_menu_item( "Zoom button",
             true, // work on all
             wxGetApp().show_canvas_zoom_button(),
-            [this]{
+            []{
                 wxGetApp().toggle_canvas_zoom_button();
                 ImGui::CloseCurrentPopup(); // Close popup to show changes on UI
             }
@@ -8577,13 +8577,13 @@ void GLCanvas3D::_render_canvas_toolbar()
         create_menu_item( "Overhangs",
             m_canvas_type == ECanvasType::CanvasView3D, // work only on prepare
             p->is_view3D_overhang_shown(),
-            [this, p]{p->show_view3D_overhang(!p->is_view3D_overhang_shown());}
+            [p]{p->show_view3D_overhang(!p->is_view3D_overhang_shown());}
         );
 
         create_menu_item( "Outline",
             m_canvas_type != ECanvasType::CanvasPreview, // not work on preview
             wxGetApp().show_outline(),
-            [this]{wxGetApp().toggle_show_outline();}
+            []{wxGetApp().toggle_show_outline();}
         );
 
         ImGui::Separator();
@@ -8591,7 +8591,7 @@ void GLCanvas3D::_render_canvas_toolbar()
         create_menu_item( "Perspective",
             true, // work on all
             cfg->get_bool("use_perspective_camera"),
-            [this, &cfg]{
+            [&cfg]{
                 cfg->set_bool("use_perspective_camera", !(cfg->get_bool("use_perspective_camera")));
                 wxGetApp().update_ui_from_settings();
             }
@@ -8610,7 +8610,7 @@ void GLCanvas3D::_render_canvas_toolbar()
         create_menu_item( "Labels",
             m_canvas_type == ECanvasType::CanvasView3D, // work only on prepare
             p->are_view3D_labels_shown(),
-            [this, p]{p->show_view3D_labels(!p->are_view3D_labels_shown());}
+            [p]{p->show_view3D_labels(!p->are_view3D_labels_shown());}
         );
 
         ImGui::PopItemFlag();
@@ -8773,18 +8773,18 @@ void GLCanvas3D::_render_paint_toolbar() const
         ImVec2 number_label_size = ImGui::CalcTextSize(std::to_string(i + 1).c_str());
         ImGui::SetCursorPosY(cursor_y + text_offset_y);
         ImGui::SetCursorPosX(spacing + i * (spacing + button_size.x) + (button_size.x - number_label_size.x) / 2);
-        ImGui::TextColored(text_color, std::to_string(i + 1).c_str());
+        ImGui::TextColored(text_color, "%s", std::to_string(i + 1).c_str());
         imgui.pop_bold_font();
 
         ImVec2 filament_first_line_label_size = ImGui::CalcTextSize(filament_text_first_line[i].c_str());
         ImGui::SetCursorPosY(cursor_y + text_offset_y + number_label_size.y);
         ImGui::SetCursorPosX(spacing + i * (spacing + button_size.x) + (button_size.x - filament_first_line_label_size.x) / 2);
-        ImGui::TextColored(text_color, filament_text_first_line[i].c_str());
+        ImGui::TextColored(text_color, "%s", filament_text_first_line[i].c_str());
 
         ImVec2 filament_second_line_label_size = ImGui::CalcTextSize(filament_text_second_line[i].c_str());
         ImGui::SetCursorPosY(cursor_y + text_offset_y + number_label_size.y + filament_first_line_label_size.y);
         ImGui::SetCursorPosX(spacing + i * (spacing + button_size.x) + (button_size.x - filament_second_line_label_size.x) / 2);
-        ImGui::TextColored(text_color, filament_text_second_line[i].c_str());
+        ImGui::TextColored(text_color, "%s", filament_text_second_line[i].c_str());
     }
 
     if (ImGui::GetWindowWidth() == constraint_window_width) {
@@ -9029,9 +9029,9 @@ void GLCanvas3D::_render_assemble_info() const
     double size1 = m_selection.get_bounding_box().size()(1);
     double size2 = m_selection.get_bounding_box().size()(2);
     if (!m_selection.is_empty()) {
-        ImGui::Text(_L("Volume:").ToUTF8()); ImGui::SameLine(caption_max);
+        ImGui::Text("%s", _L("Volume:").ToUTF8().data()); ImGui::SameLine(caption_max);
         ImGui::Text("%.2f", size0 * size1 * size2);
-        ImGui::Text(_L("Size:").ToUTF8()); ImGui::SameLine(caption_max);
+        ImGui::Text("%s", _L("Size:").ToUTF8().data()); ImGui::SameLine(caption_max);
         ImGui::Text("%.2f x %.2f x %.2f", size0, size1, size2);
     }
     imgui->end();

@@ -442,11 +442,6 @@ public:
 
 
 private:
-    wxStaticText* m_staticText_slicer_name;
-    wxStaticText* m_staticText_slicer_version;
-    wxStaticBitmap* m_bitmap;
-    wxStaticText* m_staticText_loading;
-
     wxBitmap    m_main_bitmap;
     wxFont      m_action_font;
     int         m_action_line_y_position;
@@ -2526,7 +2521,7 @@ void GUI_App::update_http_extra_header()
 void GUI_App::on_start_subscribe_again(std::string dev_id)
 {
     auto start_subscribe_timer = new wxTimer(this, wxID_ANY);
-    Bind(wxEVT_TIMER, [this, start_subscribe_timer, dev_id](auto& e) {
+    Bind(wxEVT_TIMER, [start_subscribe_timer, dev_id](auto& e) {
         start_subscribe_timer->Stop();
         Slic3r::DeviceManager* dev = Slic3r::GUI::wxGetApp().getDeviceManager();
         if (!dev) return;
@@ -2974,7 +2969,7 @@ bool GUI_App::on_init_inner()
                 }
             });
 
-        Bind(EVT_SHOW_NO_NEW_VERSION, [this](const wxCommandEvent& evt) {
+        Bind(EVT_SHOW_NO_NEW_VERSION, [](const wxCommandEvent& evt) {
             wxString msg = _L("This is the newest version.");
             InfoDialog dlg(nullptr, _L("Info"), msg);
             dlg.ShowModal();
@@ -4560,12 +4555,12 @@ std::string GUI_App::handle_web_request(std::string cmd)
                 });
             }
             else if (command_str.compare("homepage_logout") == 0) {
-                CallAfter([this] {
+                CallAfter([] {
                     wxGetApp().request_user_logout();
                 });
             }
             else if (command_str.compare("homepage_modeldepot") == 0) {
-                CallAfter([this] {
+                CallAfter([] {
                     wxGetApp().open_mall_page_dialog();
                 });
             }
@@ -4642,7 +4637,7 @@ std::string GUI_App::handle_web_request(std::string cmd)
                 }
             }
             else if (command_str.compare("begin_network_plugin_download") == 0) {
-                CallAfter([this] { wxGetApp().ShowDownNetPluginDlg(); });
+                CallAfter([] { wxGetApp().ShowDownNetPluginDlg(); });
             }
             else if (command_str.compare("get_web_shortcut") == 0) {
                 if (root.get_child_optional("key_event") != boost::none) {
@@ -4876,7 +4871,7 @@ void GUI_App::on_user_login_handle(wxCommandEvent &evt)
     DeviceManager* dev = Slic3r::GUI::wxGetApp().getDeviceManager();
     if (!dev) return;
 
-    boost::thread update_thread = boost::thread([this, dev] {
+    boost::thread update_thread = boost::thread([dev] {
         dev->update_user_machine_list_info();
     });
 
@@ -6557,7 +6552,7 @@ bool GUI_App::show_modal_ip_address_enter_dialog(bool input_sn, wxString title)
     dlg.set_machine_obj(obj);
     if (!title.empty()) dlg.update_title(title);
 
-    dlg.Bind(EVT_ENTER_IP_ADDRESS, [this, obj](wxCommandEvent& e) {
+    dlg.Bind(EVT_ENTER_IP_ADDRESS, [obj](wxCommandEvent& e) {
         auto selection_data_arr = wxSplit(e.GetString().ToStdString(), '|');
 
         if (selection_data_arr.size() == 2) {
@@ -6891,7 +6886,7 @@ bool GUI_App::check_and_keep_current_preset_changes(const wxString& caption, con
         if (!no_need_change && dlg.ShowModal() == wxID_CANCEL)
             return false;
 
-        auto reset_modifications = [this, is_called_from_configwizard]() {
+        auto reset_modifications = [this]() {
             //if (is_called_from_configwizard)
             //    return; // no need to discared changes. It will be done fromConfigWizard closing
 

@@ -2001,12 +2001,9 @@ void AMSRoad::OnPassRoad(std::vector<AMSPassRoadMode> prord_list)
     }
 }
 
-/*
-
-
-/*************************************************
-Description:AMSRoadUpPart
-**************************************************/
+// ************************************************
+// Description:AMSRoadUpPart
+// ************************************************
 AMSRoadUpPart::AMSRoadUpPart() : m_road_def_color(AMS_CONTROL_GRAY500), m_road_color(AMS_CONTROL_GRAY500) {}
 AMSRoadUpPart::AMSRoadUpPart(wxWindow* parent, wxWindowID id, AMSinfo info, AMSModel model, const wxPoint& pos, const wxSize& size)
     : AMSRoadUpPart()
@@ -2222,7 +2219,6 @@ AMSRoadDownPart::AMSRoadDownPart(wxWindow* parent, wxWindowID id, const wxPoint&
     m_road_color[1] = AMS_CONTROL_GRAY500;
     m_left_rode_mode = AMSRoadShowMode::AMS_ROAD_MODE_FOUR;
     m_right_rode_mode = AMSRoadShowMode::AMS_ROAD_MODE_FOUR;
-    m_selected = false;
 
     m_left_road_length = -1;
     m_right_road_length = -1;

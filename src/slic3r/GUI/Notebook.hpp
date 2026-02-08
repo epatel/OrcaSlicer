@@ -41,6 +41,14 @@ private:
     //ModeSizer*                      m_mode_sizer {nullptr};
 };
 
+// Suppress -Woverloaded-virtual: Notebook::AddPage intentionally hides
+// wxBookCtrlBase::AddPage with a different signature. A using declaration
+// would create ambiguity because string literals implicitly convert to bool.
+#ifdef __GNUC__
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Woverloaded-virtual"
+#endif
+
 class Notebook: public wxBookCtrlBase
 {
 public:
@@ -399,5 +407,10 @@ private:
     unsigned m_showTimeout,
              m_hideTimeout;
 };
+
+#ifdef __GNUC__
+#pragma GCC diagnostic pop
+#endif
+
 //#endif // _WIN32
 #endif // slic3r_Notebook_hpp_

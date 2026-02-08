@@ -1,9 +1,9 @@
-//**********************************************************/
-/* File: uiAmsHumidityPopup.h
-*  Description: The popup with DevAms Humidity
-*
-*  \n class uiAmsHumidityPopup
-//**********************************************************/
+// *********************************************************
+// File: uiAmsHumidityPopup.h
+//  Description: The popup with DevAms Humidity
+//
+//  class uiAmsHumidityPopup
+// *********************************************************
 
 #pragma once
 #include "slic3r/GUI/Widgets/AMSItem.hpp"

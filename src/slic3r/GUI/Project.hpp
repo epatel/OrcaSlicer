@@ -61,7 +61,6 @@ class ProjectPanel : public wxPanel
 {
 private:
     bool       m_web_init_completed = {false};
-    bool       m_reload_already = {false};
 
     wxWebView* m_browser = {nullptr};
     AuxiliaryPanel*   m_auxiliary{nullptr};

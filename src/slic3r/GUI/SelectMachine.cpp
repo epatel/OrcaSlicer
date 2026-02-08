@@ -451,7 +451,7 @@ SelectMachineDialog::SelectMachineDialog(Plater *plater)
 
     m_link_edit_nozzle->Bind(wxEVT_LEFT_DOWN, [this](auto &e) {
 
-        if (this && this->m_is_in_sending_mode) {
+        if (m_is_in_sending_mode) {
             return;
         }
 
@@ -1793,11 +1793,11 @@ static bool _is_nozzle_data_valid(MachineObject* obj_, const DevExtderSystem &ex
 }
 
 
-/**************************************************************//*
+/**
  * @param tag_nozzle_type -- return the mismatch nozzle type
  * @param tag_nozzle_diameter -- return the target nozzle_diameter but mismatch
  * @return is same or not
-/*************************************************************/
+ */
 static bool _is_same_nozzle_diameters(MachineObject* obj, float &tag_nozzle_diameter, int& mismatch_nozzle_id)
 {
     if (obj == nullptr) return false;
@@ -2070,9 +2070,9 @@ void SelectMachineDialog::on_ok_btn(wxCommandEvent &event)
             });
 
         // STUDIO-9580
-        /* use warning color if there are warning and normal messages* /
-        /* use indexes if there are several messages*/
-        /* add header and ending if there are several messages or has none block warnings*/
+        // use warning color if there are warning and normal messages
+        // use indexes if there are several messages
+        // add header and ending if there are several messages or has none block warnings
         if (confirm_text.size() > 1 || !is_printing_block)
         {
             bool has_warning_msg = false;
@@ -2273,7 +2273,7 @@ static bool _HasExt(const std::vector<FilamentInfo> &ams_mapping_result) {
     };
 
     for (const auto &info : ams_mapping_result) {
-        if (info.ams_id == VIRTUAL_AMS_MAIN_ID_STR || info.ams_id == VIRTUAL_AMS_DEPUTY_ID_STR && !info.ams_id.empty()) {
+        if (info.ams_id == VIRTUAL_AMS_MAIN_ID_STR || (info.ams_id == VIRTUAL_AMS_DEPUTY_ID_STR && !info.ams_id.empty())) {
             return true;
         }
     }
@@ -3886,7 +3886,7 @@ void SelectMachineDialog::reset_and_sync_ams_list()
             m_sizer_ams_mapping->Add(item, 0, wxALL, FromDIP(5));
         }
         item->SetToolTip(m_ams_tooltip);
-        item->Bind(wxEVT_LEFT_UP, [this, item, materials, extruder](wxMouseEvent &e) {});
+        item->Bind(wxEVT_LEFT_UP, [](wxMouseEvent &e) {});
         item->Bind(wxEVT_LEFT_DOWN, [this, item, materials, extruder](wxMouseEvent &e) {
             if (!item->m_enable) {return;}
             if (!m_check_flag || m_print_status == PrintDialogStatus::PrintStatusUnsupportedPrinter) { return; } /*STUDIO-11301*/
@@ -4396,7 +4396,7 @@ void SelectMachineDialog::set_default_from_sdcard()
             m_sizer_ams_mapping->Add(item, 0, wxALL, FromDIP(5));
         }
 
-        item->Bind(wxEVT_LEFT_UP, [this, item, materials](wxMouseEvent& e) {});
+        item->Bind(wxEVT_LEFT_UP, [](wxMouseEvent& e) {});
         item->Bind(wxEVT_LEFT_DOWN, [this, obj_, item, materials, diameters_count, fo](wxMouseEvent& e) {
             if (!item->m_enable) {return;}
             if (!m_check_flag || m_print_status == PrintDialogStatus::PrintStatusUnsupportedPrinter) { return; } /*STUDIO-11301*/

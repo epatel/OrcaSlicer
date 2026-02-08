@@ -147,12 +147,8 @@ public:
     double          m_max_jerk_e;
     double          m_max_junction_deviation;
 
-    unsigned int  m_travel_acceleration;
-    unsigned int  m_travel_jerk;
 
 
-    //BBS
-    unsigned int    m_last_additional_fan_speed;
     int             m_last_bed_temperature;
     bool            m_last_bed_temperature_reached;
     double          m_lifted;

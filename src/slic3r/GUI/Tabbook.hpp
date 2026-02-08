@@ -36,7 +36,6 @@ public:
     TabButton*                      pageButton;
 
 private:
-    wxWindow*                       m_parent;
     wxFlexGridSizer*                m_buttons_sizer;
     wxBoxSizer*                     m_sizer;
     ScalableBitmap                  m_arrow_img;
@@ -46,6 +45,14 @@ private:
     int                             m_line_margin;
     wxStaticText*                   m_footer_text {nullptr};
 };
+
+// Suppress -Woverloaded-virtual: Tabbook::AddPage intentionally hides
+// wxBookCtrlBase::AddPage with a different signature. A using declaration
+// would create ambiguity because string literals implicitly convert to bool.
+#ifdef __GNUC__
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Woverloaded-virtual"
+#endif
 
 class Tabbook: public wxBookCtrlBase
 {
@@ -184,7 +191,7 @@ public:
         return true;
     }
 
-    bool RemovePage(size_t n)
+    bool RemovePage(size_t n) override
     {
         if (!wxBookCtrlBase::RemovePage(n))
             return false;
@@ -418,8 +425,12 @@ private:
     unsigned m_showTimeout,
              m_hideTimeout;
 
-    TabButtonsListCtrl *m_ctrl{nullptr};
 
 };
+
+#ifdef __GNUC__
+#pragma GCC diagnostic pop
+#endif
+
 //#endif // _WIN32
 #endif // slic3r_Tabbook_hpp_

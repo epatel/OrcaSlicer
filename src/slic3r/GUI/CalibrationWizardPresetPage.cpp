@@ -355,7 +355,7 @@ void CaliPresetCustomRangePanel::create_panel(wxWindow* parent)
                     else
                         decimal_number = 0;
                 }
-                int max_decimal_length;
+                int max_decimal_length = 0;
                 if (i <= 1)
                     max_decimal_length = 3;
                 else if (i >= 2)

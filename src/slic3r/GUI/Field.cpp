@@ -1156,6 +1156,7 @@ void SpinCtrl::BUILD() {
             // discard this selection and set insertion point to the end of string
             // temp->GetText()->SetInsertionPointEnd();
 #endif
+            (void)temp;
 #else
             // update value for the control only if it was changed in respect to the Min/max values
             if (tmp_value != (int)value) {
@@ -1787,6 +1788,8 @@ void ColourPicker::BUILD()
 	temp->Bind(wxEVT_COLOURPICKER_CHANGED, ([this,temp](wxCommandEvent e) {
         #ifdef __WXMSW__
             draw_bmp_btn(temp, temp->GetColour());
+        #else
+            (void)temp;
         #endif
         on_change_field();
     }), temp->GetId());

@@ -3999,9 +3999,8 @@ void WipeTower::generate_new(std::vector<std::vector<WipeTower::ToolChangeResult
                 }
 
                 if (!has_inserted) {
-                    if (finish_block_tcr.gcode.empty())
-                        finish_block_tcr = finish_block_tcr;
-                    else
+                    if (!finish_block_tcr.gcode.empty())
+
                         finish_layer_tcr = merge_tcr(finish_layer_tcr, finish_block_tcr);
                 }
             }
@@ -4225,7 +4224,7 @@ Polygon WipeTower::generate_rib_polygon(const box_coordinates &wt_box)
 
 Polygon WipeTower::generate_support_wall_new(WipeTowerWriter &writer, const box_coordinates &wt_box, double feedrate, bool first_layer,bool rib_wall, bool extrude_perimeter, bool skip_points)
 {
-    auto get_closet_idx = [this, &writer](Polylines &pls) -> std::pair<int,int> {
+    auto get_closet_idx = [&writer](Polylines &pls) -> std::pair<int,int> {
         Vec2f anchor{writer.x(), writer.y()};
         int   closestIndex = -1;
         int   closestPl = -1;

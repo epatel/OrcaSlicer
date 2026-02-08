@@ -32,7 +32,6 @@ public:
 private:
     int m_min_flush_vol;
     int m_max_flush_vol;
-    float m_multiplier;
     int m_flush_dataset;
 };
 

@@ -2244,7 +2244,7 @@ void ObjectList::load_modifier(const wxArrayString& input_files, ModelObject& mo
                 bool split_compound = wxGetApp().app_config->get_bool("is_split_compound");
                 model = Model::read_from_step(
                     input_file, LoadStrategy::LoadModel, nullptr, nullptr,
-                    [this, &is_user_cancel, &linear, &angle, &split_compound](Slic3r::Step& file, double& linear_value,
+                    [&is_user_cancel, &linear, &angle, &split_compound](Slic3r::Step& file, double& linear_value,
                                                                                      double& angle_value, bool& is_split) -> int {
                         if (wxGetApp().app_config->get_bool("enable_step_mesh_setting")) {
                             StepMeshDialog mesh_dlg(nullptr, file, linear, angle);
@@ -3114,23 +3114,23 @@ void ObjectList::merge(bool to_multipart_object)
         //changed_object(obj_idx);
         //remove();
     }
-   /* wxGetApp().plater()->load_model_objects(objects);
-
-    Selection& selection = p->view3D->get_canvas3d()->get_selection();
-    size_t last_obj_idx = p->model.objects.size() - 1;
-
-    if (vol_idxs.empty()) {
-        for (size_t i = 0; i < objects.size(); ++i)
-            selection.add_object((unsigned int)(last_obj_idx - i), i == 0);
-    }
-    else {
-        for (int vol_idx : vol_idxs)
-            selection.add_volume(last_obj_idx, vol_idx, 0, false);
-    }#1#
-#else
-    wxGetApp().plater()->merge(obj_idxs[0], vol_idxs);
-#endif
-}*/
+   // wxGetApp().plater()->load_model_objects(objects);
+   //
+   // Selection& selection = p->view3D->get_canvas3d()->get_selection();
+   // size_t last_obj_idx = p->model.objects.size() - 1;
+   //
+   // if (vol_idxs.empty()) {
+   //     for (size_t i = 0; i < objects.size(); ++i)
+   //         selection.add_object((unsigned int)(last_obj_idx - i), i == 0);
+   // }
+   // else {
+   //     for (int vol_idx : vol_idxs)
+   //         selection.add_volume(last_obj_idx, vol_idx, 0, false);
+   // }#1#
+   // #else
+   //  wxGetApp().plater()->merge(obj_idxs[0], vol_idxs);
+   // #endif
+   // }*/
 
 void ObjectList::layers_editing()
 {
@@ -3184,7 +3184,7 @@ void ObjectList::boolean()
     Plater::TakeSnapshot snapshot(wxGetApp().plater(), "boolean");
 
     ModelObject* object = (*m_objects)[obj_idxs.front()];
-    TriangleMesh mesh = Plater::combine_mesh_fff(*object, -1, [this](const std::string& msg) {return wxGetApp().notification_manager()->push_plater_error_notification(msg); });
+    TriangleMesh mesh = Plater::combine_mesh_fff(*object, -1, [](const std::string& msg) {return wxGetApp().notification_manager()->push_plater_error_notification(msg); });
 
     // add mesh to model as a new object, keep the original object's name and config
     Model* model = object->get_model();

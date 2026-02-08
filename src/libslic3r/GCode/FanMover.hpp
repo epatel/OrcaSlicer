@@ -32,7 +32,6 @@ class FanMover
 private:
     const std::regex regex_fan_speed;
     const float nb_seconds_delay;
-    const bool with_D_option;
     const bool relative_e;
     const bool only_overhangs;
     const float kickstart;
@@ -64,8 +63,7 @@ public:
         const bool only_overhangs, const float kickstart)
         : regex_fan_speed("S[0-9]+"), 
         nb_seconds_delay(nb_seconds_delay>0 ? std::max(0.01f,nb_seconds_delay) : 0),
-        with_D_option(with_D_option)
-        , relative_e(relative_e), only_overhangs(only_overhangs), kickstart(kickstart), m_writer(writer){
+        relative_e(relative_e), only_overhangs(only_overhangs), kickstart(kickstart), m_writer(writer){
         m_parser.apply_config(writer.config);
     }
 

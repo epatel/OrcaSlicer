@@ -2160,7 +2160,7 @@ void PrintConfigDef::init_fff_params()
                      "\n\nThe final object flow ratio is this value multiplied by the filament flow ratio.");
     def->mode = comAdvanced;
     def->max = 2;
-    def->min = 0.01;
+    def->min = 0;
     def->set_default_value(new ConfigOptionFloat(1));
 
     def = this->add("enable_pressure_advance", coBools);
@@ -3335,7 +3335,7 @@ void PrintConfigDef::init_fff_params()
     def->category = L("Others");
     def->tooltip = L("The base size of the coherent noise features, in mm. Higher values will result in larger features.");
     def->sidetext = L("mm");	// milimeters, CIS languages need translation
-    def->min = 0.1;
+    def->min = 0;
     def->max = 500;
     def->mode = comAdvanced;
     def->set_default_value(new ConfigOptionFloat(1.0));
@@ -3353,7 +3353,7 @@ void PrintConfigDef::init_fff_params()
     def->label = L("Fuzzy skin noise persistence");
     def->category = L("Others");
     def->tooltip = L("The decay rate for higher octaves of the coherent noise. Lower values will result in smoother noise.");
-    def->min = 0.01;
+    def->min = 0;
     def->max = 1;
     def->mode = comAdvanced;
     def->set_default_value(new ConfigOptionFloat(0.5));
@@ -3874,7 +3874,7 @@ void PrintConfigDef::init_fff_params()
     def->label    = L("Interlocking beam width");
     def->tooltip  = L("The width of the interlocking structure beams.");
     def->sidetext = L("mm");	// milimeters, CIS languages need translation
-    def->min      = 0.01;
+    def->min      = 0;
     def->category = L("Advanced");
     def->mode     = comAdvanced;
     def->set_default_value(new ConfigOptionFloat(0.8));
@@ -4297,7 +4297,7 @@ void PrintConfigDef::init_fff_params()
                      "However, this results in a significantly larger G-code file and more instructions for the printer to process.\n\n"
                      "Default value of 3 works well for most cases. If your printer is stuttering, increase this value to reduce the number of adjustments made.\n\n"
                      "Allowed values: 0.5-5");
-    def->min = 0.5;
+    def->min = 0;
     def->max = 5;
     def->sidetext = L("mm");	// milimeters, CIS languages need translation
     def->mode = comAdvanced;
@@ -4410,7 +4410,7 @@ void PrintConfigDef::init_fff_params()
     def->mode = comAdvanced;
     def->readonly = false;
     def->nullable = true;
-    def->set_default_value(new ConfigOptionFloatsNullable { {0.0} });
+    def->set_default_value(new ConfigOptionFloatsNullable { 0.0 });
 
     def = this->add("cooling_tube_retraction", coFloat);
     def->label = L("Cooling tube position");
@@ -5929,8 +5929,8 @@ void PrintConfigDef::init_fff_params()
     // TRN PrintSettings: "Organic supports" > "Tip Diameter"
     def->tooltip = L("Branch tip diameter for organic supports.");
     def->sidetext = L("mm");	// milimeters, CIS languages need translation
-    def->min = 0.1f;
-    def->max = 100.f;
+    def->min = 0;
+    def->max = 100;
     def->mode = comAdvanced;
     def->set_default_value(new ConfigOptionFloat(0.8));
 

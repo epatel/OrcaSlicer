@@ -124,10 +124,6 @@ private:
     wxMenuItem* m_edit_undo;
     wxMenuItem* m_edit_redo;
     wxMenuItem* m_edit_mode;
-    wxMenuItem* m_scroll_line_up;
-    wxMenuItem* m_scroll_line_down;
-    wxMenuItem* m_scroll_page_up;
-    wxMenuItem* m_scroll_page_down;
     wxMenuItem* m_script_string;
     wxMenuItem* m_script_integer;
     wxMenuItem* m_script_double;
@@ -146,7 +142,6 @@ private:
     wxMenuItem* m_dev_tools;
 
     wxInfoBar *m_info;
-    wxStaticText* m_info_text;
 
     long m_zoomFactor;
 

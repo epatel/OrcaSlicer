@@ -16,7 +16,7 @@ class MachineObject;
 class DevConfig
 {
 public:
-    DevConfig(MachineObject* obj) : m_obj(obj) {};
+    DevConfig(MachineObject* obj) {};
     ~DevConfig() = default;
 
 public:
@@ -52,8 +52,6 @@ public:
     void ParseCalibrationConfig(const json& print_json); //cali
 
 private:
-    MachineObject* m_obj;
-
     /*configure vals*/
     // chamber
     bool m_has_chamber = false; // whether the machine has a chamber
