@@ -107,13 +107,19 @@ public:
 private:
 
     wxWebView* m_browser;
+#if !BBL_RELEASE_TO_PUBLIC
     wxBoxSizer *bSizer_toolbar;
     wxButton *  m_button_back;
     wxButton *  m_button_forward;
+#endif
     wxButton *  m_button_stop;
+#if !BBL_RELEASE_TO_PUBLIC
     wxButton *  m_button_reload;
+#endif
     wxTextCtrl *m_url;
+#if !BBL_RELEASE_TO_PUBLIC
     wxButton *  m_button_tools;
+#endif
 
     wxMenu* m_tools_menu;
     wxMenuItem* m_tools_handle_navigation;

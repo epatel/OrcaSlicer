@@ -110,7 +110,7 @@ void ScrolledWindow::SetTipColor(wxColour color)
     if (m_bottomScrollbar) m_bottomScrollbar->SetTipColor(color);
 }
 
-void ScrolledWindow::Refresh()
+void ScrolledWindow::Refresh(bool /*eraseBackground*/, const wxRect* /*rect*/)
 {
     // m_rightScrollbar->SetViewStart(0);
     // m_rightScrollbar->Refresh();
@@ -121,12 +121,13 @@ void ScrolledWindow::Refresh()
     // m_bottomScrollbar->Refresh();
 }
 
-void ScrolledWindow::SetBackgroundColour(wxColour color)
+bool ScrolledWindow::SetBackgroundColour(const wxColour& color)
 {
-    wxWindow::SetBackgroundColour(color); 
-    m_verticalSplitter->SetBackgroundColour(color); 
+    bool result = wxWindow::SetBackgroundColour(color);
+    m_verticalSplitter->SetBackgroundColour(color);
     m_userPanel->SetBackgroundColour(color);
     m_scroll_win->SetBackgroundColour(color);
+    return result;
 }
 
 void ScrolledWindow::SetMarginColor(wxColour color)
