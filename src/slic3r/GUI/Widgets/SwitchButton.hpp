@@ -62,8 +62,8 @@ public:
     void* client_data = nullptr;/*MachineObject* in StatusPanel*/
 
 public:
-    void Enable();
-    void Disable();
+    void SetEnable();
+    void SetDisable();
     bool IsEnabled(){return is_enable;};
 
     void  SetClientData(void* data) { client_data = data; };

@@ -103,7 +103,7 @@ void FilamentMapManualPanel::Hide()
     wxPanel::Hide();
 }
 
-void FilamentMapManualPanel::Show()
+void FilamentMapManualPanel::ShowPanel()
 {
     m_left_panel->Show();
     m_right_panel->Show();
@@ -278,7 +278,7 @@ void GUI::FilamentMapBtnPanel::Hide()
     m_detail->Hide();
     wxPanel::Hide();
 }
-void GUI::FilamentMapBtnPanel::Show()
+void GUI::FilamentMapBtnPanel::ShowPanel()
 {
     m_btn->Show();
     m_label->Show();
@@ -330,10 +330,10 @@ void FilamentMapAutoPanel::Hide()
     wxPanel::Hide();
 }
 
-void FilamentMapAutoPanel::Show()
+void FilamentMapAutoPanel::ShowPanel()
 {
-    m_flush_panel->Show();
-    m_match_panel->Show();
+    m_flush_panel->ShowPanel();
+    m_match_panel->ShowPanel();
     wxPanel::Show();
 }
 
@@ -378,7 +378,7 @@ void FilamentMapDefaultPanel::Hide()
     wxPanel::Hide();
 }
 
-void FilamentMapDefaultPanel::Show()
+void FilamentMapDefaultPanel::ShowPanel()
 {
     m_label->Show();
     wxPanel::Show();

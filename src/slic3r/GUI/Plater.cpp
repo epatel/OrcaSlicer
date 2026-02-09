@@ -1141,12 +1141,12 @@ void ExtruderGroup::update_ams()
     size_t left  = 4;
     size_t index = 0;
     for (size_t i = i4; i < ams_n4 && left > 0; ++i, ++index, left -= 2) {
-        ams[index]->Update(i < ams_4.size() ? ams_4[i] : info4);
+        ams[index]->UpdateData(i < ams_4.size() ? ams_4[i] : info4);
         ams[index]->Refresh();
         ams[index]->Open();
     }
     for (size_t i = i1; i < ams_n1 && left > 0; ++i, ++index, --left) {
-        ams[index]->Update(i < ams_1.size() ? ams_1[i] : info1);
+        ams[index]->UpdateData(i < ams_1.size() ? ams_1[i] : info1);
         ams[index]->Refresh();
         ams[index]->Open();
     }

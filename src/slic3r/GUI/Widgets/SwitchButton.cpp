@@ -342,7 +342,7 @@ void SwitchBoard::on_left_down(wxMouseEvent &evt)
     wxPostEvent(this, event);
 }
 
-void SwitchBoard::Enable()
+void SwitchBoard::SetEnable()
 {
     if (is_enable == true)
     {
@@ -353,7 +353,7 @@ void SwitchBoard::Enable()
     Refresh();
 }
 
-void SwitchBoard::Disable()
+void SwitchBoard::SetDisable()
 {
     if (is_enable == false)
     {

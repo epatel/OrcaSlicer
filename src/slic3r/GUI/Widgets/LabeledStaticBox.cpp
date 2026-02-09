@@ -98,9 +98,9 @@ void LabeledStaticBox::SetBorderColor(StateColor const &color)
     Refresh();
 }
 
-void LabeledStaticBox::SetFont(wxFont set_font)
+bool LabeledStaticBox::SetFont(const wxFont& font)
 {
-    m_font = set_font;
+    m_font = font;
 
     int tW,tH,descent,externalLeading;
     // empty label sets m_label_height as 0 that causes extra spacing at top
@@ -109,6 +109,7 @@ void LabeledStaticBox::SetFont(wxFont set_font)
     m_label_width  = tW;
 
     Refresh();
+    return true;
 }
 
 bool LabeledStaticBox::Enable(bool enable)

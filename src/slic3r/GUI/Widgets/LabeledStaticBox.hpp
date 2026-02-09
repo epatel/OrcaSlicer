@@ -42,7 +42,7 @@ public:
 
     void SetBorderColor(StateColor const &color);
 
-    void SetFont(wxFont set_font);
+    bool SetFont(const wxFont& font) override;
 
     bool Enable(bool enable) override;
 

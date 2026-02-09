@@ -499,6 +499,7 @@ void MediaPlayCtrl::ToggleStream()
                 // download tools
                 struct DownloadProgressDialog2 : DownloadProgressDialog
                 {
+                    using DownloadProgressDialog::make_job;
                     MediaPlayCtrl *ctrl;
                     DownloadProgressDialog2(MediaPlayCtrl *ctrl) : DownloadProgressDialog(_L("Downloading Virtual Camera Tools")), ctrl(ctrl) {}
                     struct UpgradeNetworkJob2 : UpgradeNetworkJob

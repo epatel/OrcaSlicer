@@ -18,7 +18,7 @@ public:
     std::vector<int> GetRightFilaments() const { return m_right_panel->GetAllFilaments(); }
 
     void Hide();
-    void Show();
+    void ShowPanel();
 
 private:
     void           OnSwitchFilament(wxCommandEvent &);
@@ -41,7 +41,7 @@ class FilamentMapBtnPanel : public wxPanel
 public:
     FilamentMapBtnPanel(wxWindow *parent, const wxString &label, const wxString &detail, const std::string &icon_path);
     void Hide();
-    void Show();
+    void ShowPanel();
     void Select(bool selected);
     bool Enable(bool enable);
     bool IsEnabled() const { return m_enabled; }
@@ -71,7 +71,7 @@ class FilamentMapAutoPanel : public wxPanel
 public:
     FilamentMapAutoPanel(wxWindow *parent, FilamentMapMode mode, bool machine_synced);
     void            Hide();
-    void            Show();
+    void            ShowPanel();
     FilamentMapMode GetMode() const { return m_mode; }
 
 private:
@@ -88,7 +88,7 @@ class FilamentMapDefaultPanel : public wxPanel
 public:
     FilamentMapDefaultPanel(wxWindow *parent);
     void Hide();
-    void Show();
+    void ShowPanel();
 
 private:
     Label *m_label;

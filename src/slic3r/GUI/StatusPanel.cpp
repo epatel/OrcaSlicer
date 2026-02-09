@@ -2735,7 +2735,7 @@ void StatusPanel::update(MachineObject *obj)
 {
     if (!obj || !obj->is_info_ready())
     {
-        m_nozzle_btn_panel->Disable();
+        m_nozzle_btn_panel->SetDisable();
         return;
     }
 
@@ -3175,11 +3175,11 @@ void StatusPanel::update_misc_ctrl(MachineObject *obj)
             obj->ams_status_main == AMS_STATUS_MAIN_FILAMENT_CHANGE ||
             obj->targ_nozzle_id_from_pc != INVALID_EXTRUDER_ID)
         {
-            m_nozzle_btn_panel->Disable();
+            m_nozzle_btn_panel->SetDisable();
         }
         else
         {
-            m_nozzle_btn_panel->Enable();
+            m_nozzle_btn_panel->SetEnable();
         }
     } else {
         m_nozzle_btn_panel->Hide();
@@ -4949,7 +4949,7 @@ void StatusPanel::on_nozzle_selected(wxCommandEvent &event)
         }
     }
 
-    m_nozzle_btn_panel->Enable();
+    m_nozzle_btn_panel->SetEnable();
 }
 
 void StatusPanel::on_show_print_options(wxCommandEvent& event)

@@ -386,7 +386,7 @@ void OptionsSearcher::show_dialog(Preset::Type type, wxWindow *parent, TextInput
     input->GetParent()->Hide();
 #endif
     search_dialog->SetPosition(pos);
-    search_dialog->Popup();
+    search_dialog->PopupAt();
 }
 
 void OptionsSearcher::dlg_sys_color_changed()
@@ -643,7 +643,7 @@ SearchDialog::SearchDialog(OptionsSearcher *searcher, Preset::Type type, wxWindo
 
 SearchDialog::~SearchDialog() {}
 
-void SearchDialog::Popup(wxPoint position /*= wxDefaultPosition*/)
+void SearchDialog::PopupAt(wxPoint position /*= wxDefaultPosition*/)
 {
     /* const std::string& line = searcher->search_string();
      search_line->SetValue(line.empty() ? default_string : from_u8(line));
@@ -875,7 +875,7 @@ SearchObjectDialog::SearchObjectDialog(GUI::ObjectList* object_list, wxWindow* p
 
 SearchObjectDialog::~SearchObjectDialog() {}
 
-void SearchObjectDialog::Popup(wxPoint position /*= wxDefaultPosition*/)
+void SearchObjectDialog::PopupAt(wxPoint position /*= wxDefaultPosition*/)
 {
     if (m_is_dismissing || this->IsShown()) {
         return;

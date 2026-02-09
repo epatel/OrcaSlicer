@@ -24,12 +24,6 @@ void RadioBox::SetValue(bool value)
     update();
 }
 
-bool RadioBox::GetValue()
-{
-    return wxBitmapToggleButton::GetValue();
-}
-
-
 void RadioBox::Rescale()
 {
     m_on.msw_rescale();

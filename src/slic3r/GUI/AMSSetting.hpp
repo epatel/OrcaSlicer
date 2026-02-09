@@ -110,7 +110,7 @@ public:
     ~AMSSettingTypePanel();
 
 public:
-    void Update(const MachineObject* obj);
+    void UpdateData(const MachineObject* obj);
 
 private:
     void CreateGui();

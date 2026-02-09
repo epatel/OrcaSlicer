@@ -256,7 +256,7 @@ AMSControl::AMSControl(wxWindow *parent, wxWindowID id, const wxPoint &pos, cons
             }
             else
             {
-                m_percent_humidity_dry_popup->Update(info);
+                m_percent_humidity_dry_popup->UpdateData(info);
 
                 wxPoint img_pos = ClientToScreen(wxPoint(0, 0));
                 wxPoint popup_pos(img_pos.x - m_percent_humidity_dry_popup->GetSize().GetWidth() + FromDIP(150), img_pos.y - FromDIP(80));
@@ -926,7 +926,7 @@ void AMSControl::UpdateAms(const std::string   &series_name,
             if (cans->get_ams_id() == std::to_string(VIRTUAL_TRAY_MAIN_ID) || cans->get_ams_id() == std::to_string(VIRTUAL_TRAY_DEPUTY_ID)) {
                 for (auto ifo : m_ext_info) {
                     if (ifo.ams_id == ams_id) {
-                        cans->Update(ifo);
+                        cans->UpdateData(ifo);
                         cans->show_sn_value(m_ams_model == AMSModel::AMS_LITE ? false : true);
                     }
                 }
@@ -934,7 +934,7 @@ void AMSControl::UpdateAms(const std::string   &series_name,
             else{
                 for (auto ifo : m_ams_info) {
                     if (ifo.ams_id == ams_id) {
-                        cans->Update(ifo);
+                        cans->UpdateData(ifo);
                         cans->show_sn_value(m_ams_model == AMSModel::AMS_LITE ? false : true);
                     }
                 }
@@ -945,7 +945,7 @@ void AMSControl::UpdateAms(const std::string   &series_name,
             std::string id = ams_prv.second->get_ams_id();
             auto item = m_ams_item_list.find(id);
             if (item != m_ams_item_list.end())
-            { ams_prv.second->Update(item->second->get_ams_info());
+            { ams_prv.second->UpdateData(item->second->get_ams_info());
             }
         }
     }
@@ -964,7 +964,7 @@ void AMSControl::UpdateAms(const std::string   &series_name,
                 humidity_info.humidity_percent = the_info.humidity_raw;
                 humidity_info.left_dry_time = the_info.left_dray_time;
                 humidity_info.current_temperature = the_info.current_temperature;
-                m_percent_humidity_dry_popup->Update(&humidity_info);
+                m_percent_humidity_dry_popup->UpdateData(&humidity_info);
                 break;
             }
         }

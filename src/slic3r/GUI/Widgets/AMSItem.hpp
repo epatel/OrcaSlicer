@@ -298,7 +298,7 @@ public:
     ~AMSrefresh();
 
 public:
-    void        Update(std::string ams_id, Caninfo info);
+    void        UpdateData(std::string ams_id, Caninfo info);
 
     std::string GetCanId() const { return m_info.can_id; };
 
@@ -459,7 +459,7 @@ public:
     AMSModel     m_ams_model;
     AMSModelOriginType m_ext_type = { AMSModelOriginType::GENERIC_EXT };
 
-    void         Update(Caninfo info, std::string ams_idx, bool refresh = true);
+    void         UpdateData(Caninfo info, std::string ams_idx, bool refresh = true);
     void         UnableSelected() { m_unable_selected = true; };
     void         EableSelected() { m_unable_selected = false; };
     void         OnSelected();
@@ -545,7 +545,7 @@ public:
     double                       m_radius         = {4};
     wxColour                     m_road_def_color;
     wxColour                     m_road_color;
-    void                         Update(AMSinfo amsinfo, Caninfo info, int canindex, int maxcan);
+    void                         UpdateData(AMSinfo amsinfo, Caninfo info, int canindex, int maxcan);
 
     std::vector<ScalableBitmap> ams_humidity_img;
 
@@ -579,7 +579,7 @@ public:
     void create(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize);
 
 public:
-    void Update(AMSinfo amsinfo);
+    void UpdateData(AMSinfo amsinfo);
 
     void OnVamsLoading(bool load, wxColour col = AMS_CONTROL_GRAY500);
     void SetPassRoadColour(wxColour col);
@@ -667,7 +667,7 @@ public:
     void Open();
     void Close();
 
-    void         Update(AMSinfo amsinfo);
+    void         UpdateData(AMSinfo amsinfo);
     void         create(wxWindow *parent, wxWindowID id, const wxPoint &pos, const wxSize &size);
     void         OnEnterWindow(wxMouseEvent &evt);
     void         OnLeaveWindow(wxMouseEvent &evt);
@@ -721,7 +721,7 @@ public:
     int                          m_canindex = { 0 };
     bool                         m_selected = { false };
     double                       m_radius = { 12 };
-    void                         Update(AMSinfo amsinfo);
+    void                         UpdateData(AMSinfo amsinfo);
 
     std::vector<ScalableBitmap> ams_humidity_imgs;
     std::vector<ScalableBitmap> ams_humidity_dark_imgs;
@@ -755,7 +755,7 @@ public:
     AmsItem(wxWindow *parent, AMSinfo info, AMSModel model, AMSPanelPos pos);
     ~AmsItem();
 
-    void     Update(AMSinfo info);
+    void     UpdateData(AMSinfo info);
     void     create(wxWindow *parent);
     void     AddCan(Caninfo caninfo, int canindex, int maxcan, wxBoxSizer* sizer);
     void     AddLiteCan(Caninfo caninfo, int canindex, wxGridSizer* sizer);

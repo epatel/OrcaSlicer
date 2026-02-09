@@ -217,7 +217,7 @@ public:
     ~SearchDialog();
 
     void MSWDismissUnfocusedPopup();
-    void Popup(wxPoint position = wxDefaultPosition);
+    void PopupAt(wxPoint position = wxDefaultPosition);
     void OnDismiss();
     void Dismiss();
     void Die();
@@ -261,7 +261,7 @@ public:
     ~SearchObjectDialog();
 
     void MSWDismissUnfocusedPopup();
-    void Popup(wxPoint position = wxDefaultPosition);
+    void PopupAt(wxPoint position = wxDefaultPosition);
     void OnDismiss();
     void Dismiss();
     void Die();

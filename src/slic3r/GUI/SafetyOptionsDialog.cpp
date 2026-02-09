@@ -135,7 +135,7 @@ void SafetyOptionsDialog::updateOpenDoorCheck(MachineObject *obj) {
 
     if (obj->get_door_open_check_state() != MachineObject::DOOR_OPEN_CHECK_DISABLE) {
         m_cb_open_door->SetValue(true);
-        m_open_door_switch_board->Enable();
+        m_open_door_switch_board->SetEnable();
 
         if (obj->get_door_open_check_state() == MachineObject::DOOR_OPEN_CHECK_ENABLE_WARNING) {
             m_open_door_switch_board->updateState("left");
@@ -147,7 +147,7 @@ void SafetyOptionsDialog::updateOpenDoorCheck(MachineObject *obj) {
 
     } else {
         m_cb_open_door->SetValue(false);
-        m_open_door_switch_board->Disable();
+        m_open_door_switch_board->SetDisable();
     }
 
     m_cb_open_door->Show();
@@ -193,7 +193,7 @@ wxBoxSizer* SafetyOptionsDialog::create_settings_group(wxWindow* parent)
     m_text_open_door = new Label(parent, _L("Open Door Detection"));
     m_text_open_door->SetFont(Label::Body_14);
     m_open_door_switch_board = new SwitchBoard(parent, _L("Notification"), _L("Pause printing"), wxSize(FromDIP(200), FromDIP(26)));
-    m_open_door_switch_board->Disable();
+    m_open_door_switch_board->SetDisable();
     line_sizer->AddSpacer(FromDIP(5));
     line_sizer->Add(m_cb_open_door, 0, wxALL | wxALIGN_CENTER_VERTICAL, FromDIP(5));
     line_sizer->Add(m_text_open_door, 1, wxALL | wxALIGN_CENTER_VERTICAL, FromDIP(5));
