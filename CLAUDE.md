@@ -8,44 +8,59 @@ OrcaSlicer is an open-source 3D slicer application forked from Bambu Studio, bui
 
 ## Build Commands
 
-### Building on Windows
-**Always use this command to build the project when testing build issues on Windows.**
+### First-Time Setup (macOS)
+
+The build is a two-phase process: dependencies first, then the slicer. Use `build_release_macos.sh`:
+
+```bash
+# Build dependencies only (takes a long time, ~193 targets)
+./build_release_macos.sh -d -x
+
+# Build slicer only (~656 targets)
+./build_release_macos.sh -s -x
+
+# Build both deps and slicer
+./build_release_macos.sh -x
+
+# Build slicer with tests enabled
+./build_release_macos.sh -s -x -T
+```
+
+The `-x` flag selects the Ninja Multi-Config generator (faster than Xcode for CLI builds).
+
+### Incremental Builds
+
+After the initial setup, use cmake directly for faster rebuilds:
+
+**macOS:**
+```bash
+cmake --build build/arm64 --config RelWithDebInfo --target all -- -j4
+```
+
+**Windows:**
 ```bash
 cmake --build . --config %build_type% --target ALL_BUILD -- -m
 ```
 
-### Building on macOS
-**Always use this command to build the project when testing build issues on macOS.**
+**Linux:**
 ```bash
-cmake --build build/arm64 --config RelWithDebInfo --target all --
+cmake --build build/arm64 --config RelWithDebInfo --target all -- -j4
 ```
 
-### Building on Linux
- **Always use this command to build the project when testing build issues on Linux.**
-```bash
-cmake --build build/arm64 --config RelWithDebInfo --target all --
+**Important:** Use `-j4` (or similar) to limit parallel jobs. The default (all cores) can overload the system during C++ compilation of this large codebase.
 
-```
-### Build test:
+### Quick Rebuild (skip cmake reconfiguration)
 
-**Always use this command to build the project when testing build issues on Windows.**
 ```bash
-cmake --build . --config %build_type% --target ALL_BUILD -- -m
+# Using the build script (fastest for code-only changes)
+./build_release_macos.sh -s -x -b
 ```
 
-### Building on macOS
-**Always use this command to build the project when testing build issues on macOS.**
-```bash
-cmake --build build/arm64 --config RelWithDebInfo --target all --
-```
+### Build Output Locations
 
-### Building on Linux
- **Always use this command to build the project when testing build issues on Linux.**
-```bash
-cmake --build build/arm64 --config RelWithDebInfo --target all --
-
-```
-
+- **Dependencies:** `deps/build/arm64/OrcaSlicer_dep/`
+- **Slicer build:** `build/arm64/`
+- **macOS app:** `build/arm64/src/RelWithDebInfo/OrcaSlicer.app`
 
 ### Build System
 - Uses CMake with minimum version 3.13 (maximum 3.31.x on Windows)
@@ -53,11 +68,23 @@ cmake --build build/arm64 --config RelWithDebInfo --target all --
 - Dependencies are built in `deps/build/`
 - The build process is split into dependency building and main application building
 - Windows builds use Visual Studio generators
-- macOS builds use Xcode by default, Ninja with -x flag
+- macOS builds use Xcode by default, Ninja with `-x` flag
 - Linux builds use Ninja generator
 
 ### Testing
-Tests are located in the `tests/` directory and use the Catch2 testing framework. Test structure:
+
+Tests are located in the `tests/` directory and use the Catch2 testing framework. Tests must be explicitly enabled at configure time.
+
+**Enable tests:**
+```bash
+# Via build script
+./build_release_macos.sh -s -x -T
+
+# Or via CMake directly
+cmake -DBUILD_TESTS=ON ...
+```
+
+Test structure:
 - `tests/libslic3r/` - Core library tests (21 test files)
   - Geometry processing, algorithms, file formats (STL, 3MF, AMF)
   - Polygon operations, clipper utilities, Voronoi diagrams
@@ -70,23 +97,16 @@ Tests are located in the `tests/` directory and use the Catch2 testing framework
 - `tests/slic3rutils/` - Utility function tests
 - `tests/sandboxes/` - Experimental/sandbox test code
 
-Run all tests after building:
+Run all tests (multi-config generator requires `--build-config`):
 ```bash
-cd build && ctest
-```
-
-Run tests with verbose output:
-```bash
-cd build && ctest --output-on-failure
+ctest --test-dir build/arm64 --build-config RelWithDebInfo --output-on-failure -j4
 ```
 
 Run individual test suites:
 ```bash
-# From build directory
-ctest --test-dir ./tests/libslic3r/libslic3r_tests
-ctest --test-dir ./tests/fff_print/fff_print_tests
-ctest --test-dir ./tests/sla_print/sla_print_tests
-# and so on
+ctest --test-dir build/arm64 --build-config RelWithDebInfo -R libslic3r
+ctest --test-dir build/arm64 --build-config RelWithDebInfo -R fff_print
+ctest --test-dir build/arm64 --build-config RelWithDebInfo -R sla_print
 ```
 
 ## Architecture
@@ -107,11 +127,11 @@ ctest --test-dir ./tests/sla_print/sla_print_tests
 - **src/slic3r/**: Main application framework and GUI
   - GUI application built with wxWidgets
   - Integration between libslic3r core and user interface
-  - Located in `src/slic3r/GUI/` (not shown in this directory but exists)
+  - Located in `src/slic3r/GUI/`
 
 ### Key Algorithmic Components
 - **Arachne Wall Generation**: Variable-width perimeter generation using skeletal trapezoidation
-- **Tree Supports**: Organic support generation algorithm  
+- **Tree Supports**: Organic support generation algorithm
 - **Lightning Infill**: Sparse infill optimization for internal structures
 - **Adaptive Slicing**: Variable layer height based on geometry
 - **Multi-material**: Multi-extruder and soluble support processing
@@ -120,7 +140,7 @@ ctest --test-dir ./tests/sla_print/sla_print_tests
 ### File Format Support
 - **3MF/BBS_3MF**: Native format with extensions for multi-material and metadata
 - **STL**: Standard tessellation language for 3D models
-- **AMF**: Additive Manufacturing Format with color/material support  
+- **AMF**: Additive Manufacturing Format with color/material support
 - **OBJ**: Wavefront OBJ with material definitions
 - **STEP**: CAD format support for precise geometry
 - **G-code**: Output format with extensive post-processing capabilities
@@ -139,12 +159,12 @@ ctest --test-dir ./tests/sla_print/sla_print_tests
 
 ### Resources and Configuration
 - `resources/profiles/` - Printer and material profiles organized by manufacturer
-- `resources/printers/` - Printer-specific configurations and G-code templates  
+- `resources/printers/` - Printer-specific configurations and G-code templates
 - `resources/images/` - UI icons, logos, calibration images
 - `resources/calib/` - Calibration test patterns and data
 - `resources/handy_models/` - Built-in test models (benchy, calibration cubes)
 
-### Internationalization and Localization  
+### Internationalization and Localization
 - `localization/i18n/` - Source translation files (.pot, .po)
 - `resources/i18n/` - Runtime language resources
 - Translation managed via `scripts/run_gettext.sh` / `scripts/run_gettext.bat`
@@ -157,7 +177,7 @@ ctest --test-dir ./tests/sla_print/sla_print_tests
 
 ### Build and Development Tools
 - `cmake/modules/` - Custom CMake find modules and utilities
-- `scripts/` - Python utilities for profile generation and validation  
+- `scripts/` - Python utilities for profile generation and validation
 - `tools/` - Windows build tools (gettext utilities)
 - `deps/` - External dependency build configurations
 
@@ -166,7 +186,7 @@ ctest --test-dir ./tests/sla_print/sla_print_tests
 ### Code Style and Standards
 - **C++17 standard** with selective C++20 features
 - **Naming conventions**: PascalCase for classes, snake_case for functions/variables
-- **Header guards**: Use `#pragma once` 
+- **Header guards**: Use `#pragma once`
 - **Memory management**: Prefer smart pointers, RAII patterns
 - **Thread safety**: Use TBB for parallelization, be mindful of shared state
 
@@ -174,12 +194,12 @@ ctest --test-dir ./tests/sla_print/sla_print_tests
 
 #### Adding New Print Settings
 1. Define setting in `PrintConfig.cpp` with proper bounds and defaults
-2. Add UI controls in appropriate GUI components  
+2. Add UI controls in appropriate GUI components
 3. Update serialization in config save/load
 4. Add tooltips and help text for user guidance
 5. Test with different printer profiles
 
-#### Modifying Slicing Algorithms  
+#### Modifying Slicing Algorithms
 1. Core algorithms live in `libslic3r/` subdirectories
 2. Performance-critical code should be profiled and optimized
 3. Consider multi-threading implications (TBB integration)
@@ -187,7 +207,7 @@ ctest --test-dir ./tests/sla_print/sla_print_tests
 5. Add regression tests where appropriate
 
 #### GUI Development
-1. GUI code resides in `src/slic3r/GUI/` (not visible in current tree)
+1. GUI code resides in `src/slic3r/GUI/`
 2. Use existing wxWidgets patterns and custom controls
 3. Support both light and dark themes
 4. Consider DPI scaling on high-resolution displays
@@ -202,7 +222,7 @@ ctest --test-dir ./tests/sla_print/sla_print_tests
 
 ### Dependencies and Build System
 - **CMake-based** with separate dependency building phase
-- **Dependencies** built once in `deps/build/`, then linked to main application  
+- **Dependencies** built once in `deps/build/`, then linked to main application
 - **Cross-platform** considerations important for all changes
 - **Resource files** embedded at build time, platform-specific handling
 
@@ -215,6 +235,10 @@ ctest --test-dir ./tests/sla_print/sla_print_tests
 
 ## Important Development Notes
 
+### Compiler Warnings
+- **`-Woverloaded-virtual`**: All 29 locations have been fixed. When wxWidgets subclasses need methods with different signatures than base class virtuals, use one of: rename the method, fix the signature to match base + `override`, remove redundant wrappers, or add `using` declarations (only when signatures are different enough to avoid ambiguity).
+- **Warnings in `deps_src/`**: Third-party code, do not modify.
+
 ### Codebase Navigation
 - Use search tools extensively - codebase has 500k+ lines
 - Key entry points: `src/OrcaSlicer.cpp` for application startup
@@ -223,7 +247,7 @@ ctest --test-dir ./tests/sla_print/sla_print_tests
 
 ### Compatibility and Stability
 - **Backward compatibility** maintained for project files and profiles
-- **Cross-platform** support essential (Windows/macOS/Linux)  
+- **Cross-platform** support essential (Windows/macOS/Linux)
 - **File format** changes require careful version handling
 - **Profile migrations** needed when settings change significantly
 
