@@ -86,6 +86,7 @@ graph LR
 
   src --> entry["OrcaSlicer.cpp — entry point"]
   src --> libslic3r["libslic3r/ — core engine"]
+  src --> libvgcode["libvgcode/ — G-code visualization lib"]
   src --> slic3r["slic3r/ — app framework"]
 
   libslic3r --> ls_gcode["GCode/ — G-code gen & post-processing"]
@@ -100,6 +101,7 @@ graph LR
   libslic3r --> ls_exec["Execution/ — TBB parallelization"]
   libslic3r --> ls_opt["Optimize/ — NLopt, brute-force"]
   libslic3r --> ls_shape["Shape/ — text shapes"]
+  libslic3r --> ls_feature["Feature/ — feature detection"]
 
   slic3r --> s_gui["GUI/ — wxWidgets UI"]
   slic3r --> s_utils["Utils/ — networking, utilities"]
@@ -111,9 +113,10 @@ graph LR
   s_gui --> sg_devcore["DeviceCore/ — device comms (47 files)"]
   s_gui --> sg_devtab["DeviceTab/ — device UI"]
   s_gui --> sg_printer["Printer/ — printer UI"]
+  s_gui --> sg_libvgcode["LibVGCode/ — G-code viewer wrapper"]
 
-  tests --> t_libslic3r["libslic3r/ — core tests (21 files)"]
-  tests --> t_fff["fff_print/ — FDM tests (12 files)"]
+  tests --> t_libslic3r["libslic3r/ — core tests (22 files)"]
+  tests --> t_fff["fff_print/ — FDM tests (13 files)"]
   tests --> t_sla["sla_print/ — SLA tests (4 files)"]
   tests --> t_nest["libnest2d/ — nesting tests"]
   tests --> t_utils["slic3rutils/ — utility tests"]
@@ -151,7 +154,8 @@ classDiagram
   }
 
   class ModelInstance {
-    +Transform3d transform
+    +Geometry::Transformation m_transformation
+    +get_matrix() Transform3d
   }
 
   Model "1" --> "*" ModelObject
@@ -223,9 +227,9 @@ classDiagram
 
 | Type | Purpose |
 |------|---------|
-| `NORMAL` | Standard printable geometry |
-| `NEGATIVE` | Subtracted from model (boolean difference) |
-| `MODIFIER` | Overrides settings in its region |
+| `MODEL_PART` | Standard printable geometry |
+| `NEGATIVE_VOLUME` | Subtracted from model (boolean difference) |
+| `PARAMETER_MODIFIER` | Overrides settings in its region |
 | `SUPPORT_ENFORCER` | Forces support generation in region |
 | `SUPPORT_BLOCKER` | Prevents support generation in region |
 
@@ -249,17 +253,20 @@ flowchart TD
     S6["posIroning\nTop surface smoothing"]
     S7["posSupportMaterial\nTree / traditional supports"]
     S8["posSimplifyPath\nPath optimization"]
-    S9["posDetectOverhangsForLift\nZ-hop overhang detection"]
+    S9["posSimplifySupportPath\nSupport path optimization"]
+    S10["posDetectOverhangsForLift\nZ-hop overhang detection"]
+    S11["posSimplifyWall\nWall path simplification"]
+    S12["posSimplifyInfill\nInfill path simplification"]
 
-    S1 --> S2 --> S3 --> S4 --> S5 --> S6 --> S7 --> S8 --> S9
+    S1 --> S2 --> S3 --> S4 --> S5 --> S6 --> S7 --> S8 --> S9 --> S10 --> S11 --> S12
   end
 
   subgraph global["Global Steps (Print)"]
     direction TB
     G1["psWipeTower / psToolOrdering\nMulti-material sequencing"]
     G2["psSkirtBrim\nBed adhesion structures"]
-    G3["psConflictCheck\nCollision detection"]
-    G4["psGCodeExport\nFinal G-code generation"]
+    G3["psGCodeExport\nFinal G-code generation"]
+    G4["psConflictCheck\nCollision detection"]
 
     G1 --> G2 --> G3 --> G4
   end
@@ -399,6 +406,8 @@ flowchart TD
 | `tpMultiDevice` | MultiMachinePage | Multi-printer management |
 | `tpProject` | ProjectPanel | Project management |
 | `tpCalibration` | CalibrationPanel | Calibration workflows |
+| `tpAuxiliary` | AuxiliaryPanel | Auxiliary/utility features |
+| `toDebugTool` | DebugToolPanel | Debug tools (note: naming inconsistency) |
 
 ### 5.3 Gizmos (3D Editing Tools)
 
@@ -621,6 +630,12 @@ classDiagram
     +extrusion_multiplier
   }
 
+  class MachineEnvelopeConfig {
+    +machine limits
+    +max feedrate
+    +max acceleration
+  }
+
   class PrintConfig {
     +retraction settings
     +speed settings
@@ -647,7 +662,9 @@ classDiagram
   ConfigBase <|-- DynamicPrintConfig
   ConfigBase <|-- StaticPrintConfig
   StaticPrintConfig <|-- GCodeConfig
+  StaticPrintConfig <|-- MachineEnvelopeConfig
   GCodeConfig <|-- PrintConfig
+  MachineEnvelopeConfig <|-- PrintConfig
   StaticPrintConfig <|-- PrintObjectConfig
   StaticPrintConfig <|-- PrintRegionConfig
   PrintConfig <|-- FullPrintConfig
@@ -750,7 +767,9 @@ flowchart LR
 
 ### 9.3 G-code Post-Processing Chain
 
-After extrusion paths are generated, the G-code export pipeline applies several post-processors in sequence:
+After extrusion paths are generated, the G-code export pipeline applies processors at two stages: inline during path generation, and as a TBB pipeline on the generated G-code text.
+
+**Inline processors** (applied during `GCode::do_export()` path generation):
 
 | Processor | Class | Purpose |
 |-----------|-------|---------|
@@ -758,13 +777,21 @@ After extrusion paths are generated, the G-code export pipeline applies several 
 | Wipe | `Wipe` | Wipe nozzle on retraction |
 | Ooze prevention | `OozePrevention` | Multi-extruder ooze control |
 | Wipe tower | `WipeTowerIntegration` | Color transition priming |
-| Cooling | `CoolingBuffer` | Fan speed and slowdown |
-| Fan mover | `FanMover` | Advance fan commands |
-| Pressure equalization | `PressureEqualizer` | Pressure advance tuning |
-| Adaptive PA | `AdaptivePAProcessor` | Dynamic pressure advance |
+| Arc fitting | `ArcWelder` | Convert line segments to arcs (in `Geometry/`) |
+| Small area flow | `SmallAreaInfillFlowCompensator` | Adjust flow for small infill areas |
 | Spiral vase | `SpiralVase` | Continuous Z for vase mode |
 | Conflict checker | `ConflictChecker` | Toolhead collision detection |
-| Arc fitting | `ArcWelder` | Convert segments to arcs |
+
+**TBB pipeline stages** (applied as streaming filters on G-code text):
+
+| Stage | Class | Purpose |
+|-------|-------|---------|
+| 1. Pressure equalization | `PressureEqualizer` | Pressure advance tuning (optional) |
+| 2. Cooling | `CoolingBuffer` | Fan speed and slowdown |
+| 3. Fan mover | `FanMover` | Advance fan commands |
+| 4. Adaptive PA | `AdaptivePAProcessor` | Dynamic pressure advance |
+
+**External post-processing** (`PostProcessor`): runs user-specified scripts on the final G-code file.
 
 ---
 
@@ -781,7 +808,7 @@ Every major module in the codebase, grouped by layer. Each is a candidate for a 
 | **Layer** | `Layer.*`, `LayerRegion.*` | Per-layer slice data and region processing |
 | **TriangleMesh** | `TriangleMesh.*`, `TriangleMeshSlicer.*`, `TriangleSelector.*` | Mesh data structure and slicing |
 | **GCode** | `GCode/` (45 files) | G-code generation, post-processing, and analysis |
-| **Fill** | `Fill/` (28 files) | Infill pattern implementations |
+| **Fill** | `Fill/` (38 files) | Infill pattern implementations |
 | **Support** | `Support/` (15 files) | Tree and traditional support generation |
 | **Arachne** | `Arachne/` (8 files) | Variable-width wall generation via skeletal trapezoidation |
 | **Format** | `Format/` (23 files) | File I/O for all supported formats |
@@ -805,6 +832,7 @@ Every major module in the codebase, grouped by layer. Each is a candidate for a 
 | **Slicing** | `Slicing.*`, `SlicingAdaptive.*` | Layer height computation and adaptive slicing |
 | **Spatial indexing** | `AABBTreeIndirect.hpp`, `KDTreeIndirect.hpp`, `AABBMesh.*` | Spatial search structures |
 | **Pathfinding** | `ShortestPath.*`, `JumpPointSearch.*`, `AStar.hpp` | Path optimization algorithms |
+| **Feature** | `Feature/` | Feature detection algorithms |
 | **Platform** | `Platform.*`, `MacUtils.hpp` | OS-specific abstractions |
 
 ### GUI Layer (`src/slic3r/GUI/`)
@@ -833,6 +861,7 @@ Every major module in the codebase, grouped by layer. Each is a candidate for a 
 | **DeviceCore** | `DeviceCore/` (47 files) | Device communication protocols |
 | **DeviceTab** | `DeviceTab/` (4 files) | Device management UI |
 | **Printer** | `Printer/` (4 files) | Printer-specific UI components |
+| **LibVGCode** | `LibVGCode/` (2 files) | G-code visualization library wrapper |
 
 ### Services & Utilities (`src/slic3r/Utils/`)
 
@@ -853,8 +882,8 @@ Every major module in the codebase, grouped by layer. Each is a candidate for a 
 
 | Suite | Directory | Files | Covers |
 |-------|-----------|-------|--------|
-| **libslic3r** | `tests/libslic3r/` | 21 | Core geometry, algorithms, file formats |
-| **fff_print** | `tests/fff_print/` | 12 | FDM slicing, G-code generation, fills |
+| **libslic3r** | `tests/libslic3r/` | 22 | Core geometry, algorithms, file formats |
+| **fff_print** | `tests/fff_print/` | 13 | FDM slicing, G-code generation, fills |
 | **sla_print** | `tests/sla_print/` | 4 | SLA processing and supports |
 | **libnest2d** | `tests/libnest2d/` | — | 2D nesting algorithms |
 | **slic3rutils** | `tests/slic3rutils/` | — | Utility functions |
