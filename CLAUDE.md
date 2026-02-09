@@ -6,6 +6,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 OrcaSlicer is an open-source 3D slicer application forked from Bambu Studio, built using C++ with wxWidgets for the GUI and CMake as the build system. The project uses a modular architecture with separate libraries for core slicing functionality, GUI components, and platform-specific code.
 
+> **Before making changes**, read [`doc/architecture.md`](doc/architecture.md) for a detailed architecture overview including class hierarchies, the slicing pipeline, GUI component tree, threading model, device/network layer, configuration system, and a full module index with entry points for common tasks. When making structural changes (adding modules, renaming classes, changing the build or threading model), update `doc/architecture.md` to reflect them.
+
 ## Build Commands
 
 ### First-Time Setup (macOS)
